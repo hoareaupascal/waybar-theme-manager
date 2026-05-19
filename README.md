@@ -2,5 +2,5 @@
 A simple script to select waybar theme using fzf.  
 All of the themes are from : https://github.com/HANCORE-linux/waybar-themes  
 
-![GTK4 Theme Switcher in Action](preview.png)
+![Waybar Theme Switcher in Action](preview.png)
 
