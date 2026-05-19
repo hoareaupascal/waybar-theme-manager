@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# --- Configuration ---
+THEME_DIR="$HOME/waybar-theme-manager/config"
+TARGET_DIR="$HOME/.config/waybar"
+
+# Ensure the theme directory exists
+if [ ! -d "$THEME_DIR" ]; then
+    echo "Error: Directory $THEME_DIR not found."
+    exit 1
+fi
+
+# --- Loop Start ---
+while true; do
+    # 1. Get list of themes and add a manual "Quit" option
+    # We use 'printf' to prepend "EXIT" to the folder list
+    SELECTED_THEME=$(printf "DONE (Exit)\n$(ls "$THEME_DIR")" | fzf \
+        --prompt="Select Waybar Theme: " \
+        --height=40% \
+        --border \
+        --header="Press ESC to close or select 'DONE' to exit")
+
+    # 2. Handle Exit conditions (ESC or selecting DONE)
+    if [[ -z "$SELECTED_THEME" || "$SELECTED_THEME" == "DONE (Exit)" ]]; then
+        echo "Exiting theme manager."
+        break
+    fi
+
+    # 3. Apply the theme
+    echo "Applying: $SELECTED_THEME..."
+    
+    cp -rf "$THEME_DIR/$SELECTED_THEME/." "$TARGET_DIR/"
+
+    # 4. Restart Waybar
+    if command -v omarchy-restart-waybar &> /dev/null; then
+        omarchy-restart-waybar
+        echo "Theme '$SELECTED_THEME' loaded."
+    else
+        echo "Restart command not found."
+    fi
+
+    # Brief pause so the user can read the status before fzf clears the screen again
+    sleep 1
+done
